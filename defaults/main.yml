@@ -20,6 +20,8 @@ kong_rpm_pkg_pre_0_11_x:     "kong-{{ kong_version }}.el7.noarch.rpm"
 kong_deb_pkg_url_pre_0_11_x: "https://github.com/Mashape/kong/releases/download/{{ kong_version }}/{{ kong_deb_pkg_pre_0_11_x }}"
 kong_rpm_pkg_url_pre_0_11_x: "https://github.com/Mashape/kong/releases/download/{{ kong_version }}/{{ kong_rpm_pkg_pre_0_11_x }}"
 
+# https://download.konghq.com/gateway-3.x-ubuntu-jammy/pool/all/k/kong/kong_3.2.2_arm64.deb
+
 ############
 ##  Config
 ##
