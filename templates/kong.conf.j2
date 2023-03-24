@@ -23,12 +23,14 @@
 # GENERAL
 #------------------------------------------------------------------------------
 
+prefix = {{ kong_nginx_working_dir }}
 #prefix = /usr/local/kong/       # Working directory. Equivalent to Nginx's
                                  # prefix path, containing temporary files
                                  # and logs.
                                  # Each Kong process must have a separate
                                  # working directory.
 
+log_level = {{ kong_log_level }}
 #log_level = notice              # Log level of the Nginx server. Logs are
                                  # found at `<prefix>/logs/error.log`.
 
@@ -410,6 +412,11 @@
 # NGINX
 #------------------------------------------------------------------------------
 
+{% if kong_proxy_listen is string %}
+proxy_listen = {{ kong_proxy_listen }}
+{% else %}
+proxy_listen = {{ kong_proxy_listen|join(", ") }}
+{% endif %}
 #proxy_listen = 0.0.0.0:8000 reuseport backlog=16384, 0.0.0.0:8443 http2 ssl reuseport backlog=16384
                          # Comma-separated list of addresses and ports on
                          # which the proxy server should listen for
@@ -540,6 +547,11 @@
 # See http://nginx.org/en/docs/stream/ngx_stream_core_module.html#listen
 # for a description of the formats that Kong might accept in stream_listen.
 
+{% if kong_admin_listen is string %}
+admin_listen = {{ kong_admin_listen }}
+{% else %}
+admin_listen = {{ kong_admin_listen|join(", ") }}
+{% endif %}
 #admin_listen = 127.0.0.1:8001 reuseport backlog=16384, 127.0.0.1:8444 http2 ssl reuseport backlog=16384
                          # Comma-separated list of addresses and ports on
                          # which the Admin interface should listen.
@@ -1134,6 +1146,9 @@ pg_port = {{ kong_pg_port }}
 pg_user = {{ kong_pg_user|default('kong') }}
 pg_password = {{ kong_pg_password|default('kongpass') }}
 pg_database = {{ kong_pg_database|default('kong') }}
+pg_ssl = {{ kong_pg_ssl|default('off')|lower }}
+pg_ssl_verify = {{ kong_pg_ssl_verify|default('off')|lower }}
+
 {% endif %}
 
 #pg_host = 127.0.0.1             # Host of the Postgres server.
@@ -1262,6 +1277,24 @@ pg_database = {{ kong_pg_database|default('kong') }}
                                  # read-only connection.
 
 {% if kong_database == 'cassandra' %}
+cassandra_contact_points = {{ kong_cassandra_contact_points|join(',') }}
+cassandra_port = {{ kong_cassandra_port }}
+cassandra_keyspace = {{ kong_cassandra_keyspace|default('kong') }}
+cassandra_timeout = {{ kong_cassandra_timeout }}
+cassandra_ssl = {{ kong_cassandra_ssl|default('off')|lower }}
+cassandra_ssl_verify = {{ kong_cassandra_ssl_verify|default('off')|lower }}
+cassandra_username = {{ kong_cassandra_username }}
+cassandra_password = {{ kong_cassandra_password }}
+cassandra_data_centers = {{ kong_cassandra_data_centers|join(',') }}
+cassandra_consistency = {{ kong_cassandra_consistency }}
+cassandra_lb_policy = {{ kong_cassandra_lb_policy|default('RoundRobin') }}
+{% if kong_cassandra_lb_policy == 'DCAwareRoundRobin' %}
+cassandra_local_datacenter = {{ kong_cassandra_local_datacenter }}
+{% endif %}
+cassandra_repl_strategy = {{ kong_cassandra_repl_strategy }}
+cassandra_repl_factor = {{ kong_cassandra_repl_factor }}
+cassandra_schema_consensus_timeout = {{ kong_cassandra_schema_consensus_timeout|default(10000) }}
+
 {% endif %}
 #cassandra_contact_points = 127.0.0.1  # A comma-separated list of contact
                                        # points to your cluster.
